@@ -9,7 +9,7 @@ const LoadingSpinner = props => {
 };
 
 LoadingSpinner.defaultProps = {
-  text: 'Loadingfddfdf...'
+  text: 'Loadingfddfdf..adfaf.'
 };
 
 export default LoadingSpinner;
