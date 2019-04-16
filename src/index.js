@@ -1,12 +1,46 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import SeasonDisplay from './SeasonDisplay';
+import LoadingSpinner from './LoadingSpinner';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+class App extends React.Component {
+  //not required by react
+  //constructor
+  constructor(props) {
+    super(props);
+    //this is the only time we do direct assignment for state
+    this.state = { lat: null, errorMessage: '' };
+  }
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: http://bit.ly/CRA-PWA
-serviceWorker.unregister();
+  componentDidMount() {
+    window.navigator.geolocation.getCurrentPosition(
+      position => {
+        this.setState({ lat: position.coords.latitude });
+      },
+      failure => {
+        this.setState({ errorMessage: failure.message });
+      }
+    );
+  }
+
+  renderContent() {
+    if (this.state.errorMessage && !this.state.lat) {
+      return <div>Error: {this.state.errorMessage}</div>;
+    } else if (!this.state.errorMessage && this.state.lat) {
+      return <SeasonDisplay lat={this.state.lat} />;
+    } else {
+      return (
+        <div>
+          <LoadingSpinner text="Allow geolocation to see the season." />
+        </div>
+      );
+    }
+  }
+  //react says we must define render
+  //render only deals with jsx
+  render() {
+    return <div className="border red">{this.renderContent()}</div>;
+  }
+}
+
+ReactDOM.render(<App />, document.querySelector('#root'));
